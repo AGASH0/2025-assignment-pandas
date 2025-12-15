@@ -28,10 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    code_reg=[]
-    name_reg=[]
-    code_dep=[]
-    name_dep=[]
+    code_reg = []
+    name_reg = []
+    code_dep = []
+    name_dep = []
     for i in range(len(departments)):
         for j in range(len(regions)):
             if departments["region_code"][i] == regions["code"][j]:
@@ -39,7 +39,12 @@ def merge_regions_and_departments(regions, departments):
                 name_dep.append(departments["name"][i])
                 code_reg.append(regions["code"][j])
                 name_reg.append(regions["name"][j])
-    regions_and_departments = {'code_reg' : code_reg, 'name_reg': name_reg, 'code_dep': code_dep, 'name_dep' : name_dep}
+    regions_and_departments = {
+        'code_reg' : code_reg,
+        'name_reg': name_reg,
+        'code_dep': code_dep,
+        'name_dep' : name_dep
+        }
     return pd.DataFrame(data=regions_and_departments)
 
 
