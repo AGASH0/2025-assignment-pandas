@@ -12,7 +12,6 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
-
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv('data/referendum.csv', sep=';')
@@ -32,6 +31,7 @@ def merge_regions_and_departments(regions, departments):
     name_reg = []
     code_dep = []
     name_dep = []
+
     for i in range(len(departments)):
         for j in range(len(regions)):
             if departments["region_code"][i] == regions["code"][j]:
@@ -39,14 +39,14 @@ def merge_regions_and_departments(regions, departments):
                 name_dep.append(departments["name"][i])
                 code_reg.append(regions["code"][j])
                 name_reg.append(regions["name"][j])
+
     regions_and_departments = {
-        'code_reg' : code_reg,
+        'code_reg': code_reg,
         'name_reg': name_reg,
         'code_dep': code_dep,
-        'name_dep' : name_dep
-        }
+        'name_dep': name_dep
+    }
     return pd.DataFrame(data=regions_and_departments)
-
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -61,8 +61,12 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     ref_clean = referendum.copy()
     reg_clean = regions_and_departments.copy()
 
-    ref_clean["Department code"] = ref_clean["Department code"].astype(str).str.zfill(2)
+    # Utilisation de parenthèses pour couper la ligne longue (E501)
+    ref_clean["Department code"] = (
+        ref_clean["Department code"].astype(str).str.zfill(2)
+    )
     reg_clean["code_dep"] = reg_clean["code_dep"].astype(str).str.zfill(2)
+
     ref_clean = ref_clean[~ref_clean["Department code"].str.contains("Z")]
 
     merged_df = pd.merge(
@@ -92,7 +96,11 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     }
 
     result = referendum_and_areas.groupby('code_reg').agg(aggregations)
-    ordered_columns = ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
+    # Liste coupée sur plusieurs lignes pour éviter E501
+    ordered_columns = [
+        'name_reg', 'Registered', 'Abstentions',
+        'Null', 'Choice A', 'Choice B'
+    ]
     return result[ordered_columns]
 
 
